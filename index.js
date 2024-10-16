@@ -15,13 +15,24 @@ function calculateSum() {
         return;
 
     } catch (e) {
+        output.innerText = '';
         error.innerText = e.message;
     }
 
     function add(input) {
         let delimiter = /,|\\n/;
         let negativeNo = [];
+
+        if (input.startsWith("//")) {
+            const delimiterInfo = input.match(/\/\/(.+)\\n/); //this regex check custom delimeter //[delimiter]\n[numbers…] 
+            if (delimiterInfo) {
+                delimiter = new RegExp(delimiter.source + '|' + delimiterInfo[1]); // add custom delimiter to existing delimiter
+                input = input.slice(delimiterInfo[0].length);
+            }
+        }
+
         const numbers = input.split(delimiter).map(Number);
+
         if (numbers.some(isNaN)) {
             throw new Error('Input string contains non-numeric values');
         }
@@ -34,7 +45,7 @@ function calculateSum() {
         }, 0);
 
         if (negativeNo.length) {
-            throw new Error(`negative numbers not allowed: ${negativeNo.join(', ')}`);
+            throw new Error(`Negative numbers not allowed: ${negativeNo.join(', ')}`);
         }
 
         return total;
